@@ -1,5 +1,6 @@
 import express from "express";
 import { config } from "dotenv"; 
+import cors from "cors";
 import { chats } from "./data/data.js";
 import connectDB from "./config/db.js";
 import userRoutes from './routes/userRoutes.js';
@@ -9,6 +10,7 @@ config();
 connectDB();
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req,res) => {

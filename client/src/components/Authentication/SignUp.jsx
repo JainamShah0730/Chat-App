@@ -1,91 +1,151 @@
-import React, {useState} from "react";
-import { VStack, Box, InputGroup, useToastStyles  } from "@chakra-ui/react";
-import { Field, Input, Button } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { VStack, InputGroup, Input, Button } from "@chakra-ui/react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-    const [show, setShow] = useState(false);
+  const [show, setShow] = useState(false);
 
-    const [name, setName] = useState()
-    const [email, setEmail] = useState()
-    const [confirmpassword, setConfirmpassword] = useState()
-    const [password, setpassword] = useState()
-    const [pic, setPic] = useState()
-    const [loading, setLoading]= useState(false)
-    const toast= useToast();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmpassword, setConfirmpassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [pic, setPic] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const handleClick = () => setShow(!show)
-    const postDetail =(pics) => {
-      setLoading(true);
-      if(pic===undefined ){
-        toast({
-          title: "Please select an Image!",
-          status: "waring",
-          durantion: 5000,
-          isClosable: true,
-          position:"bottom",
+  const navigate = useNavigate();
+
+  const handleClick = () => setShow(!show);
+
+  // ✅ IMAGE UPLOAD
+  const postDetail = (pics) => {
+    setLoading(true);
+
+    if (!pics) {
+      alert("Please select an image");
+      setLoading(false);
+      return;
+    }
+
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "CHAT-APP");
+      data.append("cloud_name", "dlp666xsd");
+
+      fetch("https://api.cloudinary.com/v1_1/dlp666xsd/image/upload", {
+        method: "POST",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.secure_url);
+          console.log("Uploaded:", data.secure_url);
+          setLoading(false);
         })
+        .catch(() => {
+          alert("Upload failed");
+          setLoading(false);
+        });
+    } else {
+      alert("Only JPG/PNG allowed");
+      setLoading(false);
+    }
+  };
 
-      }
-     }
-    const submitHandler=()=>{}
+  // ✅ SUBMIT
+  const submitHandler = async () => {
+    setLoading(true);
 
+    if (!name || !email || !password || !confirmpassword) {
+      alert("Please fill all fields");
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmpassword) {
+      alert("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/api/user", // ✅ FIXED
+        { name, email, password, pic },
+        {
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+
+      alert("Registration Successful ✅");
+
+      localStorage.setItem("userInfo", JSON.stringify(data));
+
+      setLoading(false);
+      navigate("/chats");
+    } catch (error) {
+      alert(
+        error?.response?.data?.message || "Something went wrong ❌"
+      );
+      setLoading(false);
+    }
+  };
 
   return (
-     <VStack spacing='5px'color="black">
-    <Field.Root id="signup-name" required>
-  <Field.Label>Name</Field.Label>
-  <Input placeholder="Enter name" 
-  onChange={(e) => setName(e.target.value)} />
-</Field.Root>
+    <VStack spacing="10px">
+      <Input placeholder="Name" onChange={(e) => setName(e.target.value)} />
 
-<Field.Root id="signup-email" required>
-  <Field.Label>Email</Field.Label>
-  <Input type='email' placeholder="Enter Email"
-  onChange={(e)=> setEmail(e.target.value)} />
-</Field.Root>
+      <Input
+        type="email"
+        placeholder="Email"
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
+      <InputGroup
+  endElement={
+    <Button size="sm" onClick={handleClick}>
+      {show ? "Hide" : "Show"}
+    </Button>
+  }
+>
+  <Input
+    type={show ? "text" : "password"}
+    placeholder="Password"
+    onChange={(e) => setPassword(e.target.value)}
+  />
+</InputGroup>
 
-<Field.Root id="signup-password">
-  <Field.Label>Password</Field.Label>
-  <InputGroup
-   endElement={
-          <Button h="1.75" size="sm" onClick={handleClick}>
-            {show ? "Hide" : "Show"}
-          </Button>
-        }
-        >
-           <Input type={show ? "text" : "password"} onChange={(e) => setpassword(e.target.value)}/>
-  </InputGroup>
-</Field.Root>
+      <InputGroup
+  endElement={
+    <Button size="sm" onClick={handleClick}>
+      {show ? "Hide" : "Show"}
+    </Button>
+  }
+>
+  <Input
+    type={show ? "text" : "password"}
+    placeholder="Confirm Password"
+    onChange={(e) => setConfirmpassword(e.target.value)}
+  />
+</InputGroup>
+      {/* FILE INPUT */}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => postDetail(e.target.files[0])}
+      />
 
-<Field.Root id="signup-confirm-password" required>
-  <Field.Label>Confirm Password</Field.Label>
-  <InputGroup
-   endElement={
-          <Button h="1.75" size="sm" onClick={handleClick}>
-            {show ? "Hide" : "Show"}
-          </Button>
-        }
-        >
-           <Input type={show ? "text" : "password"} onChange={(e) => setConfirmpassword(e.target.value)}/>
-  </InputGroup>
-</Field.Root>
+      {/* PREVIEW */}
+      {pic && <img src={pic} alt="preview" width="100" />}
 
-<Field.Root id="signup-pic">
-  <Field.Label>Upload your Picture</Field.Label>
-  <Input  type="file" p={1.5} accept="image/*"
-  onChange={(e)=> postDetail(e.target.files[0])} />
-</Field.Root>
-
-<Button colorScheme="blue" width="100%" style={{marginTop:15}}
-onClick={submitHandler}>
-    Sign Up
-</Button>
-
-
+      <Button onClick={submitHandler} loading={loading} width="100%">
+        Sign Up
+      </Button>
     </VStack>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;
