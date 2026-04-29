@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { VStack, InputGroup, Input, Button } from "@chakra-ui/react";
-import { Field } from "@chakra-ui/react";
+import {
+  VStack,
+  Input,
+  Button,
+  FormControl,
+  FormLabel,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -49,32 +56,36 @@ const Login = () => {
 
   return (
     <VStack spacing="5px">
-      <Field.Root id="login-email" required>
-        <Field.Label>Email</Field.Label>
+      <FormControl id="email" isRequired>
+        <FormLabel>Email</FormLabel>
         <Input
           type="email"
           placeholder="Enter Email"
           onChange={(e) => setEmail(e.target.value)}
         />
-      </Field.Root>
+      </FormControl>
 
-      <Field.Root id="login-password">
-        <Field.Label>Password</Field.Label>
-        <InputGroup
-          endElement={
-            <Button size="sm" onClick={handleClick}>
-              {show ? "Hide" : "Show"}
-            </Button>
-          }
-        >
+      <FormControl id="password" isRequired>
+        <FormLabel>Password</FormLabel>
+        <InputGroup>
           <Input
             type={show ? "text" : "password"}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <InputRightElement width="4.5rem">
+            <Button size="sm" onClick={handleClick}>
+              {show ? "Hide" : "Show"}
+            </Button>
+          </InputRightElement>
         </InputGroup>
-      </Field.Root>
+      </FormControl>
 
-      <Button width="100%" mt={4} onClick={submitHandler} loading={loading}>
+      <Button
+        width="100%"
+        mt={4}
+        onClick={submitHandler}
+        isLoading={loading}
+      >
         Login
       </Button>
 

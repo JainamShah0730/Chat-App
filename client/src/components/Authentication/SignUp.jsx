@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { VStack, InputGroup, Input, Button } from "@chakra-ui/react";
+import {
+  VStack,
+  InputGroup,
+  Input,
+  Button,
+  InputRightElement,
+} from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +23,6 @@ const Signup = () => {
 
   const handleClick = () => setShow(!show);
 
-  // ✅ IMAGE UPLOAD
   const postDetail = (pics) => {
     setLoading(true);
 
@@ -40,7 +45,6 @@ const Signup = () => {
         .then((res) => res.json())
         .then((data) => {
           setPic(data.secure_url);
-          console.log("Uploaded:", data.secure_url);
           setLoading(false);
         })
         .catch(() => {
@@ -53,7 +57,6 @@ const Signup = () => {
     }
   };
 
-  // ✅ SUBMIT
   const submitHandler = async () => {
     setLoading(true);
 
@@ -71,12 +74,10 @@ const Signup = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/user", // ✅ FIXED
+        "http://localhost:5000/api/user",
         { name, email, password, pic },
         {
-          headers: {
-            "Content-type": "application/json",
-          },
+          headers: { "Content-type": "application/json" },
         }
       );
 
@@ -87,9 +88,7 @@ const Signup = () => {
       setLoading(false);
       navigate("/chats");
     } catch (error) {
-      alert(
-        error?.response?.data?.message || "Something went wrong ❌"
-      );
+      alert(error?.response?.data?.message || "Something went wrong ❌");
       setLoading(false);
     }
   };
@@ -104,44 +103,43 @@ const Signup = () => {
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <InputGroup
-  endElement={
-    <Button size="sm" onClick={handleClick}>
-      {show ? "Hide" : "Show"}
-    </Button>
-  }
->
-  <Input
-    type={show ? "text" : "password"}
-    placeholder="Password"
-    onChange={(e) => setPassword(e.target.value)}
-  />
-</InputGroup>
+      {/* Password */}
+      <InputGroup>
+        <Input
+          type={show ? "text" : "password"}
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <InputRightElement width="4.5rem">
+          <Button size="sm" onClick={handleClick}>
+            {show ? "Hide" : "Show"}
+          </Button>
+        </InputRightElement>
+      </InputGroup>
 
-      <InputGroup
-  endElement={
-    <Button size="sm" onClick={handleClick}>
-      {show ? "Hide" : "Show"}
-    </Button>
-  }
->
-  <Input
-    type={show ? "text" : "password"}
-    placeholder="Confirm Password"
-    onChange={(e) => setConfirmpassword(e.target.value)}
-  />
-</InputGroup>
-      {/* FILE INPUT */}
+      {/* Confirm Password */}
+      <InputGroup>
+        <Input
+          type={show ? "text" : "password"}
+          placeholder="Confirm Password"
+          onChange={(e) => setConfirmpassword(e.target.value)}
+        />
+        <InputRightElement width="4.5rem">
+          <Button size="sm" onClick={handleClick}>
+            {show ? "Hide" : "Show"}
+          </Button>
+        </InputRightElement>
+      </InputGroup>
+
       <input
         type="file"
         accept="image/*"
         onChange={(e) => postDetail(e.target.files[0])}
       />
 
-      {/* PREVIEW */}
       {pic && <img src={pic} alt="preview" width="100" />}
 
-      <Button onClick={submitHandler} loading={loading} width="100%">
+      <Button onClick={submitHandler} isLoading={loading} width="100%">
         Sign Up
       </Button>
     </VStack>
