@@ -10,20 +10,20 @@ import {
   TabPanel
 } from '@chakra-ui/react'
 import { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Login from '../components/Authentication/Login'
 import Signup from '../components/Authentication/SignUp'
 
 const Homepage = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
    
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"))
 
     if(!user){
-      history.pushState("/chats")
+      navigate("/chats")
     }
-  }, [history])
+  }, [navigate])
 
   return (
     <Container maxW='xl' centerContent>
