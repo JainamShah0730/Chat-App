@@ -74,7 +74,7 @@ const Signup = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/user",
+        "/api/user",
         { name, email, password, pic },
         {
           headers: { "Content-type": "application/json" },

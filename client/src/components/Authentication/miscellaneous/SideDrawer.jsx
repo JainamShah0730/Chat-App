@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Box, Text, Tooltip, Menu, MenuButton, MenuItem, MenuList, MenuDivider, Drawer, useDisclosure, DrawerContent, DrawerHeader, DrawerOverlay, DrawerBody 
     , Input, 
     Toast,
-    useToast
+    useToast,
+    Spinner
     
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons"
@@ -18,13 +19,13 @@ import UserListItem from "../../UserAvatar/UserListItem";
 
 const SideDrawer = () => {
     const [search, setSearch] = useState("")
-    const [searchResult, setSearchResult] = useState(null)
+    const [searchResult, setSearchResult] = useState([])
     const [loading, setLoading]= useState(false)
-    const [LoadingChat, setLoadingChat] = useState();
+    const [loadingChat, setLoadingChat] = useState();
     
 
 
-    const {user} = ChatState()
+    const {user , setSelectedChat, chats, setChats} = ChatState()
          const { isOpen, onOpen, onClose } = useDisclosure();
 
 
@@ -83,7 +84,35 @@ const SideDrawer = () => {
                  }
      
         const accessChat = async (userId) => {     
+            try{
+                setLoadingChat(true)
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${user.token}`
+                }
+              }
 
+              const {data} =  await axios.post("/api/chat", {userId}, config)
+             
+               if(!chats.find((c) =>c._id === data._id)) setChats([data, ...chats])
+              
+              setSelectedChat(data)
+              setLoadingChat(false)
+              onClose()
+            
+            
+            } catch(error){
+                toast({
+                    title: "Error fetching the chat",
+                    description: error?.response?.data?.message || "Failed to fetch the chat",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "bottom-left"
+                })
+
+            }
         }
 
     return (
@@ -148,19 +177,19 @@ const SideDrawer = () => {
                 </Box>
                 {loading ? (
                     <ChatLoading/>
-                ) : searchResult === null ? (
-                    <Text fontSize="sm" color="gray.500">Search for users by name or email</Text>
-                ) : searchResult.length > 0 ? (
-                    searchResult.map((userItem) => (
+                ) : searchResult?.length > 0 ? (
+                    searchResult.map((user) => (
                         <UserListItem
-                            key={userItem._id}
-                            user={userItem}
-                            handleFunction={() => accessChat(userItem._id)}
+                            key={user._id}
+                            user={user}
+                            handleFunction={() => accessChat(user._id)}
                         />
                     ))
-                ) : (
+                ) : search ? (
                     <Text>No users found</Text>
-                )}
+                ) : null}
+
+                {loadingChat && <Spinner ml="auto" diplay="flex"/>}
             </DrawerBody>
              </DrawerContent>
         </Drawer>
