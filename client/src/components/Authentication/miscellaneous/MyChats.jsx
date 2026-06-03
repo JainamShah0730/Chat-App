@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { ChatState } from '../../../Context/ChatProvider'
+import axios from 'axios'
 import { Box, Button, Stack, Text, useToast } from '@chakra-ui/react'
 import { AddIcon } from '@chakra-ui/icons'
 import ChatLoading from '../../ChatLoading'
@@ -15,7 +16,7 @@ const MyChats= () => {
     const fetchChats = async () => {
     try{
         const config ={
-            header: {
+            headers: {
                 Authorization: `Bearer ${user.token}`,
             }
         }
