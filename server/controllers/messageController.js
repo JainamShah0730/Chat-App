@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
-import Message from "../Models/messageModel"
-import User from "../Models/userModel"
-import Chat from "../Models/chatModel"
+import Message from "../Models/messageModel.js"
+import User from "../Models/userModel.js"
+import Chat from "../Models/chatModel.js"
 
 export const sendMessage = asyncHandler(async(req,res) =>{
      const {content, chatId} = req.body
@@ -21,8 +21,8 @@ export const sendMessage = asyncHandler(async(req,res) =>{
           var message =  await Message.create(newMessage)
 
          
-         message = await message.populate("sender", "name pic").execPopulate
-         message = await message.populate("chat").execPopulate
+         message = await message.populate("sender", "name pic")
+         message = await message.populate("chat")
          message = await User.populate(message, {
             path:"chat.users",
             select: "name pic email", 
@@ -37,5 +37,21 @@ export const sendMessage = asyncHandler(async(req,res) =>{
 
      }
 
+})
+
+export const allMessages= asyncHandler(async(req,res) => {
+   try{
+      const messages =  await Message.find({chat:req.params.chatId}).populate("sender","name pic email")
+      .populate("chat");
+      
+   res.json(messages)
+   
+   } catch(error){
+       res.status(400)
+       throw new Error(error.message)
+   }
+
+
+     
 })
     
