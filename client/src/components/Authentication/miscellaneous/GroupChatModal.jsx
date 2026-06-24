@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button, Modal, ModalBody, ModalCloseButton, ModalHeader, ModalOverlay, useDisclosure, ModalFooter, ModalContent, Text, useToast, FormControl, Input, Box } from "@chakra-ui/react";
 import { ChatState } from "../../../Context/ChatProvider";
 import axios from "axios";
-import UserListItem from "../../UserAvatar/UserListItem";
 import UserBadgeItem from "../../UserAvatar/UserBadgeItem";
+import UserListItem from "../../UserAvatar/UserListItem";
 
 const GroupChatModal = ({children}) => {
 
