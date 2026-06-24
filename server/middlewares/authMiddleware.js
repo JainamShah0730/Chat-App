@@ -10,10 +10,11 @@ const protect = asyncHandler(async (req, res , next) => {
         req.headers.authorization && 
         req.headers.authorization.startsWith("Bearer")
     ) {
+
         try{
-            console.log("AUTH HEADER:", req.headers.authorization)
+            // Don't log full auth headers or tokens (sensitive).
+            // Extract token silently and only log non-sensitive identifiers.
             token = req.headers.authorization.split(" ")[1]
-            console.log("EXTRACTED TOKEN:", token)
 
             if (!token || token.includes("{{") || token.split('.').length !== 3) {
                 res.status(401)
@@ -21,7 +22,8 @@ const protect = asyncHandler(async (req, res , next) => {
             }
 
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
-            console.log("DECODED JWT:", decoded)
+            // Log only the user id to aid debugging without exposing secrets
+            console.log("Authenticated user id:", decoded.id)
             req.user = await User.findById(decoded.id).select("-password")
             next()
         } catch (error) {
