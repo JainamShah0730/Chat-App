@@ -39,4 +39,25 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(5000, console.log(`Server started on port ${PORT}`));
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    process.exit(1);
+});
+
+const server = app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+        console.error(`Port ${PORT} is already in use. Kill the process using it or set a different PORT.`);
+    } else {
+        console.error('Server error:', err);
+    }
+    process.exit(1);
+});

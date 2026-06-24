@@ -7,6 +7,9 @@ import ProfileModal from "./Authentication/miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./Authentication/miscellaneous/UpdateGroupChatModal";
 import { useState } from "react";
 import axios from "axios";
+import "./Style.css"
+import ScrollableChat from "./ScrollControlChat";
+
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -143,7 +146,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 margin="auto"/>
                ) : (
                <div className= "messages">
-               {/* messages */}
+               <ScrollableChat messages={messages}/>
                </div>
                ) }
                <FormControl onKeyDown={sendMessage} isRequired mt={3}>
