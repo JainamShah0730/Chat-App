@@ -3,7 +3,7 @@ import { Button, Modal, ModalBody, ModalCloseButton, ModalHeader, ModalOverlay, 
 import { ChatState } from "../../../Context/ChatProvider";
 import axios from "axios";
 import UserListItem from "../../UserAvatar/UserListItem";
-import UserBadgeItem from "../../UserAvatar/UserBadgeitem";
+import UserBadgeItem from "../../UserAvatar/UserBadgeItem";
 
 const GroupChatModal = ({children}) => {
 
