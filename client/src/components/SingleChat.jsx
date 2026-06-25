@@ -108,7 +108,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     const sendMessage = async(event) => {
         if(event.key== "Enter" && newMessage){
-            socket.emit("stop Typing", selectedChat._id)
+            socket.emit("stop typing", selectedChat._id)
       try {
         const config ={
             headers: {
@@ -157,7 +157,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       let lastTypingTime = new Date().getTime()
       var timerLength = 3000;
       setTimeout (() => {
-        var tiemNow = newDate().getTime()
+        var timeNow = new Date().getTime()
         var timeDiff = timeNow - lastTypingTime
 
         if(timeDiff >= timerLength && typing){
