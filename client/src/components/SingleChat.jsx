@@ -10,8 +10,7 @@ import axios from "axios";
 import "./Style.css"
 import ScrollableChat from "./ScrollControlChat";
 import io from "socket.io-client"
-import Lottie from "lottie-react"
-import animationData from "../Animation/Typing.json"
+
 
 const ENDPOINT = import.meta.env.VITE_API_URL;
 var socket, selectedChatCompare;
@@ -215,11 +214,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                </div>
                ) }
                <FormControl onKeyDown={sendMessage} isRequired mt={3}>
-                {isTyping ? ( <div><Lottie 
-                animationData={animationData}
-                loop={true}
-                style={{marginBottom:15 , marginLeft:0, width: 70}}
-                /></div>) :( <></> )}
+                {isTyping ? ( 
+                  <Box bg="#E8E8E8" borderRadius="20px" p="5px 15px" width="fit-content" mb={3} ml={1}>
+                     <Spinner size="xs" mr={2} />
+                     <Text as="span" fontSize="sm" color="gray.500">Typing...</Text>
+                  </Box>
+                ) :( <></> )}
                 <Input 
                 variant="filled"
                 bg="#E0E0E0"
