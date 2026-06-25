@@ -40,7 +40,7 @@ const MyChats = ({ fetchAgain }) => {
   }, [fetchAgain]);
 
   return (
-    <div className={`flex-col h-full w-full bg-white ${selectedChat ? "hidden md:flex" : "flex"}`}>
+    <div className="flex flex-col h-full w-full bg-white">
       
       {/* Header */}
       <div className="flex justify-between items-center px-6 py-6 shrink-0">

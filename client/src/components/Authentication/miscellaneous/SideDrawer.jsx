@@ -109,22 +109,22 @@ const SideDrawer = () => {
 
     return (
         <>
-        <header className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 shrink-0">
-          <div className="w-1/3 flex items-center">
+        <header className="flex items-center justify-between px-4 md:px-8 py-3 md:py-4 bg-white border-b border-gray-100 shrink-0 gap-2 md:gap-4">
+          <div className="flex-1 flex items-center">
             <div 
-              className="flex items-center w-56 px-4 py-2 bg-gray-50 border border-gray-100 rounded-full cursor-pointer hover:bg-gray-100 transition-colors"
+              className="flex items-center w-auto md:w-56 px-3 py-2 md:px-4 bg-gray-50 border border-gray-100 rounded-full cursor-pointer hover:bg-gray-100 transition-colors"
               onClick={() => setIsOpen(true)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-              <span className="text-sm text-gray-400 truncate">Search users...</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-4 md:w-4 text-gray-400 md:mr-2 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <span className="text-sm text-gray-400 truncate hidden md:inline">Search users...</span>
             </div>
           </div>
           
-          <div className="flex-grow text-center text-2xl font-bold tracking-tight text-[#0a4a3c]">
+          <div className="flex-1 text-center text-xl md:text-2xl font-bold tracking-tight text-[#0a4a3c] truncate">
             RageBait
           </div>
           
-          <div className="w-1/3 flex items-center justify-end gap-6">
+          <div className="flex-1 flex items-center justify-end gap-3 md:gap-6">
             
             <div className="relative" ref={notifRef}>
               <button 
@@ -163,7 +163,7 @@ const SideDrawer = () => {
                   <div className="h-8 w-8 rounded-full bg-[#0a4a3c] text-white flex items-center justify-center font-medium text-sm">
                      {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 hidden md:block">
                     My Profile
                   </span>
                 </div>

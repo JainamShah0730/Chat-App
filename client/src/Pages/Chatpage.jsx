@@ -6,7 +6,7 @@ import { ChatState } from "../Context/ChatProvider";
 
 const ChatPage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
-  const { user } = ChatState();
+  const { user, selectedChat } = ChatState();
 
   return (
     // Main Background: Soft Ivory/White for a clean canvas
@@ -20,14 +20,14 @@ const ChatPage = () => {
         
         {/* Sidebar Container */}
         {user && (
-          <aside className="w-1/3 max-w-sm flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <aside className={`flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${selectedChat ? "hidden md:flex" : "flex"} w-full md:w-1/3 md:max-w-sm shrink-0`}>
             <MyChats fetchAgain={fetchAgain} />
           </aside>
         )}
 
         {/* Main Chat Area Container */}
         {user && (
-          <section className="flex-grow flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+          <section className={`flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative ${selectedChat ? "flex" : "hidden md:flex"} flex-grow w-full md:w-auto`}>
             <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
           </section>
         )}
