@@ -1,35 +1,40 @@
-import { useEffect, useState } from 'react'
-import { Box } from '@chakra-ui/react'
-import axios from 'axios'
-import { ChatState } from '../Context/ChatProvider'
-import SideDrawer from '../components/Authentication/miscellaneous/SideDrawer'
-import MyChats from '../components/Authentication/miscellaneous/MyChats'
-import ChatBox from '../components/Authentication/miscellaneous/ChatBox'
+import { useState } from "react";
+import ChatBox from "../components/Authentication/miscellaneous/ChatBox";
+import MyChats from "../components/Authentication/miscellaneous/MyChats";
+import SideDrawer from "../components/Authentication/miscellaneous/SideDrawer";
+import { ChatState } from "../Context/ChatProvider";
 
 const ChatPage = () => {
+  const [fetchAgain, setFetchAgain] = useState(false);
+  const { user } = ChatState();
 
-    const {user} = ChatState()
-    const [fetchAgain, setFetchAgain] = useState(false);
+  return (
+    // Main Background: Soft Ivory/White for a clean canvas
+    <div className="flex flex-col h-screen bg-[#FDFBF7] text-[#111827] font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
+      
+      {/* Header Bar */}
+      {user && <SideDrawer />}
 
-    return (
-        <div style={{width:"100%"}}>
-        {user && <SideDrawer/>}
+      {/* Main Chat Workspace */}
+      <main className="flex-grow flex p-6 gap-6 max-w-screen-2xl mx-auto w-full overflow-hidden">
+        
+        {/* Sidebar Container */}
+        {user && (
+          <aside className="w-1/3 max-w-sm flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <MyChats fetchAgain={fetchAgain} />
+          </aside>
+        )}
 
-        <Box
-        display="flex"
-        justifyContent="space-between"
-        width="100%"
-        height="91.5vh"
-        padding="10px"
-        >  
+        {/* Main Chat Area Container */}
+        {user && (
+          <section className="flex-grow flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+            <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+          </section>
+        )}
+        
+      </main>
+    </div>
+  );
+};
 
-            {user && <MyChats 
-            fetchAgain={fetchAgain}/>}
-            {user && <ChatBox 
-            fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
-        </Box>
-        </div>
-    )
-}
-
-export default ChatPage
+export default ChatPage;

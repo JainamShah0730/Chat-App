@@ -1,66 +1,56 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import {
-  Container,
-  Box,
-  Text,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel
-} from '@chakra-ui/react'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Login from '../components/Authentication/Login'
-import Signup from '../components/Authentication/SignUp'
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import Login from '../components/Authentication/Login';
+import Signup from '../components/Authentication/SignUp';
 
 const Homepage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
    
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("userInfo"))
-
-    if(!user){
-      navigate("/chats")
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) {
+      navigate("/chats");
     }
-  }, [navigate])
+  }, [navigate]);
 
   return (
-    <Container maxW='xl' centerContent>
-      <Box
-        display="flex"
-        justifyContent="center"
-        p={3}
-        bg="white"
-        w="100%"
-        m="40px 0 15px 0"
-        borderRadius="lg"
-        borderWidth="1px"
-      >
-        <Text fontSize="4xl" fontFamily="Work Sans" color="black">
+    <div className="flex flex-col min-h-screen bg-[#FDFBF7] text-[#111827] font-sans selection:bg-emerald-900 selection:text-white justify-center items-center p-4">
+      
+      {/* Brand Header */}
+      <div className="flex justify-center bg-white w-full max-w-md p-4 mb-6 rounded-2xl shadow-sm border border-gray-100">
+        <h1 className="text-4xl font-bold tracking-tight text-emerald-950 font-sans">
           RageBait
-        </Text>
-      </Box>
+        </h1>
+      </div>
 
-      <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
-        <Tabs variant="enclosed" isFitted>
-          <TabList>
-            <Tab>Login</Tab>
-            <Tab>Sign Up</Tab>
+      {/* Main Auth Card */}
+      <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-sm border border-gray-100">
+        <Tabs variant="enclosed" isFitted colorScheme="teal">
+          <TabList className="mb-4">
+            <Tab _selected={{ color: 'white', bg: '#064e3b' }} className="rounded-t-lg font-medium transition-colors">Login</Tab>
+            <Tab _selected={{ color: 'white', bg: '#064e3b' }} className="rounded-t-lg font-medium transition-colors">Sign Up</Tab>
           </TabList>
 
           <TabPanels>
-            <TabPanel>
+            <TabPanel className="p-0 pt-2">
               <Login />
             </TabPanel>
 
-            <TabPanel>
+            <TabPanel className="p-0 pt-2">
               <Signup />
             </TabPanel>
           </TabPanels>
         </Tabs>
-      </Box>
-    </Container>
+      </div>
+
+    </div>
   );
 };
 

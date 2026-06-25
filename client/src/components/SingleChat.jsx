@@ -157,57 +157,59 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     return(
         <>
         {selectedChat ? (
-            <> 
-            <Text 
-            fontSize={{ base: "28px", md: "30px"}}
-            pb={3}
-            px={2}
-            w="100%" 
-            fontFamily="Work sans"
-            display="flex"
-            justifyContent={{ base: "space-between"}}
-            alignItems="center">
-                <IconButton display={{ base:"flex" , md:"none"}}
-                icon={<ArrowBackIcon/>}
-                onClick= {() => setSelectedChat("")}/>
+            <div className="flex flex-col h-full w-full"> 
+            
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                    <button 
+                        className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
+                        onClick= {() => setSelectedChat("")}
+                    >
+                        <ArrowBackIcon w={5} h={5} />
+                    </button>
 
-                {!selectedChat.isGroupChat ? (
-                    <>
-                     {getSender (user, selectedChat.users)}
-                     <ProfileModal user={getSenderFull (user, selectedChat.users)}/>
-                    </> 
-                ) : (
-                     <> {selectedChat.chatName.toUpperCase()}
-                     <UpdateGroupChatModal fetchAgain={fetchAgain}
-                     setFetchAgain={setFetchAgain}
-                     fetchMessages={fetchMessages}/>
-                </>
-                )}
-            </Text>
-             <Box display="flex"
-             flexDir="column"
-             justifyContent="flex-end"
-             p={3}
-             bg="#E8E8E8"
-             w="100%"
-             h="100%"
-             borderRadius="lg"
-             overflowY="hidden">
+                    {!selectedChat.isGroupChat ? (
+                        <div className="flex items-center gap-3">
+                            <span className="text-lg font-bold text-emerald-950 font-sans">
+                                {getSender(user, selectedChat.users)}
+                            </span>
+                            <ProfileModal user={getSenderFull(user, selectedChat.users)} />
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-3"> 
+                            <span className="text-lg font-bold text-emerald-950 font-sans">
+                                {selectedChat.chatName.toUpperCase()}
+                            </span>
+                            <UpdateGroupChatModal 
+                                fetchAgain={fetchAgain}
+                                setFetchAgain={setFetchAgain}
+                                fetchMessages={fetchMessages}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Chat Area */}
+             <div className="flex-grow flex flex-col p-4 bg-gray-50/50 overflow-hidden relative">
                
-
                {loading ? (
-                <Spinner size="xl" w={20} 
-                h={20} 
-                alignSelf="center"
-                margin="auto"/>
+                <div className="m-auto">
+                    <Spinner size="xl" color="teal.600" w={20} h={20} />
+                </div>
                ) : (
-               <div className= "messages">
-               <ScrollableChat messages={messages}/>
+               <div className="flex flex-col overflow-y-auto w-full h-full custom-scrollbar pb-2">
+                 <ScrollableChat messages={messages}/>
                </div>
                ) }
-               <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+               
+               <form 
+                    onSubmit={(e) => { e.preventDefault(); sendMessage({ key: "Enter" }); }} 
+                    className="mt-3 relative shrink-0"
+               >
                 {isTyping && ( 
-                  <div style={{ marginBottom: 15, marginLeft: 0 }}>
+                  <div className="absolute -top-12 left-2">
                     <Player
                       autoplay
                       loop
@@ -216,25 +218,39 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     />
                   </div>
                 )}
-                <Input 
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                onChange={typingHandler}
-                value={newMessage}
-                />
                 
-
-               </FormControl>
-             </Box>
-            </>
+                <div className="relative flex items-center">
+                    <input 
+                        type="text"
+                        className="w-full pl-6 pr-12 py-3.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-700 shadow-sm transition-all text-gray-700 text-sm"
+                        placeholder="Type a message..."
+                        onChange={typingHandler}
+                        onKeyDown={sendMessage}
+                        value={newMessage}
+                        required
+                    />
+                    <button 
+                        type="button" 
+                        onClick={() => sendMessage({ key: "Enter" })}
+                        className="absolute right-2 p-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full transition-colors shadow-sm"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                            <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
+                        </svg>
+                    </button>
+                </div>
+               </form>
+             </div>
+            </div>
         ) : (
-            <Box display="flex" alignItems="center" justifyContent="center" h="100%">
-                <Text fontSize ="3xl" pb={3} fontFamily="Work sans">
-                    Click on user to start Chatting 
-                </Text>
-            </Box>
-        
+            <div className="flex items-center justify-center h-full w-full bg-gray-50/30">
+                <div className="text-2xl text-gray-400 font-medium font-sans flex flex-col items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-emerald-800/20">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                    </svg>
+                    Click on a user to start chatting
+                </div>
+            </div>
         )}
         </>
     )
