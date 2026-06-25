@@ -224,10 +224,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                ) }
                <FormControl onKeyDown={sendMessage} isRequired mt={3}>
                 {isTyping ? ( <div><Lottie 
-                options={defaultOptions}
-                width={70}
-                style={{marginBottom:15 , marginLeft:0}}
-                
+                animationData={animationData}
+                loop={true}
+                style={{marginBottom:15 , marginLeft:0, width: 70}}
                 /></div>) :( <></> )}
                 <Input 
                 variant="filled"

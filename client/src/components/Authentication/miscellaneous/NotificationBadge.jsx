@@ -1,16 +1,29 @@
 import { FaBell } from "react-icons/fa";
+import { Box } from "@chakra-ui/react";
 
 function NotificationBadge({ count }) {
   return (
-    <div className="relative inline-block">
+    <Box position="relative" display="inline-block">
       <FaBell size={25} />
 
       {count > 0 && (
-        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+        <Box
+          position="absolute"
+          top="-2px"
+          right="-2px"
+          bg="red.500"
+          color="white"
+          fontSize="xs"
+          borderRadius="full"
+          px={2}
+          py={1}
+          transform="translate(25%, -25%)"
+          zIndex={1}
+        >
           {count}
-        </span>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 
