@@ -1,18 +1,12 @@
-import { Skeleton, Stack } from "@chakra-ui/react";
 import React from "react";
 
 const ChatLoading = () => {
     return (
-       <Stack spacing={3} width="100%">
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-         <Skeleton height="45px" width="100%" borderRadius="md" startColor="gray.100" endColor="gray.300"/>
-       </Stack>
+       <div className="flex flex-col gap-3 w-full">
+         {[...Array(8)].map((_, i) => (
+           <div key={i} className="h-[45px] w-full rounded-md bg-gray-200 animate-pulse" />
+         ))}
+       </div>
     )
 }
 

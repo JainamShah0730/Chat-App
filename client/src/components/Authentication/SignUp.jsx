@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "../ui/ToastContext";
 
 const Signup = () => {
   const [show, setShow] = useState(false);
@@ -196,18 +196,56 @@ const Signup = () => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
-        <input
-          type="file"
-          accept="image/*"
-          className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:bg-white transition-all text-sm file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-          onChange={(e) => postDetail(e.target.files[0])}
-        />
-        {pic && (
-          <div className="mt-3 flex justify-center">
-             <img src={pic} alt="preview" className="w-16 h-16 rounded-full object-cover border-2 border-emerald-500 shadow-sm" />
+        <label className="block text-sm font-medium text-gray-700 mb-3">Profile Picture (Optional)</label>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            {pic ? (
+              <>
+                <img src={pic} alt="preview" className="w-20 h-20 rounded-full object-cover border-2 border-emerald-500 shadow-sm" />
+                <button
+                  type="button"
+                  onClick={() => setPic("")}
+                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                  title="Remove image"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <div 
+                className="w-20 h-20 rounded-full border-2 border-dashed border-emerald-300 bg-emerald-50 flex flex-col items-center justify-center text-emerald-600 cursor-pointer hover:bg-emerald-100 transition-colors"
+                onClick={() => document.getElementById("profile-upload").click()}
+              >
+                {loading ? (
+                    <span className="w-6 h-6 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                    <>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span className="text-[10px] font-semibold tracking-wide">UPLOAD</span>
+                    </>
+                )}
+              </div>
+            )}
+            <input
+              id="profile-upload"
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => postDetail(e.target.files[0])}
+            />
           </div>
-        )}
+          <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-700">Profile Photo</span>
+              <span className="text-xs text-gray-500 mt-0.5">
+                 {pic ? "Looking good! Click the X to remove." : "Add a photo so your friends can recognize you."}
+              </span>
+          </div>
+        </div>
       </div>
 
       <button

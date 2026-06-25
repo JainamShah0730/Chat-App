@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "../ui/ToastContext";
 
 const Login = () => {
   const [show, setShow] = useState(false);

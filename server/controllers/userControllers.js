@@ -73,6 +73,28 @@ const users = await User.find(keyword)
 res.send(users) 
    
 })
+const updateProfilePic = asyncHandler(async (req, res) => {
+   const { pic } = req.body;
+   
+   const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { pic },
+      { new: true }
+   ).select("-password");
+
+   if (!updatedUser) {
+      res.status(404);
+      throw new Error("User not found");
+   } else {
+      res.json({
+         _id: updatedUser._id,
+         name: updatedUser.name,
+         email: updatedUser.email,
+         pic: updatedUser.pic,
+         token: generateToken(updatedUser._id),
+      });
+   }
+});
 
 
-export default  {registerUser, authUser, allUsers}
+export default  {registerUser, authUser, allUsers, updateProfilePic}

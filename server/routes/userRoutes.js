@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.route('/').post(userControllers.registerUser).get(protect, userControllers.allUsers)
 router.post('/login',userControllers.authUser)
-
+router.put('/update-pic', protect, userControllers.updateProfilePic)
 
 export default router

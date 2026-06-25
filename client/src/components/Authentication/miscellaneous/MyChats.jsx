@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChatState } from '../../../Context/ChatProvider';
 import axios from 'axios';
-import { useToast } from '@chakra-ui/react';
+import { useToast } from '../../ui/ToastContext';
 import ChatLoading from '../../ChatLoading';
 import { getSender } from '../../../config/ChatLogics';
 import GroupChatModal from './GroupChatModal';

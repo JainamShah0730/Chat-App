@@ -1,17 +1,11 @@
-import React, { useEffect } from 'react';
-import {
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel
-} from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from '../components/Authentication/Login';
 import Signup from '../components/Authentication/SignUp';
 
 const Homepage = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('login');
    
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -32,24 +26,25 @@ const Homepage = () => {
 
       {/* Main Auth Card */}
       <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-sm border border-gray-100">
-        <Tabs variant="enclosed" isFitted colorScheme="teal">
-          <TabList className="mb-4">
-            <Tab _selected={{ color: 'white', bg: '#064e3b' }} className="rounded-t-lg font-medium transition-colors">Login</Tab>
-            <Tab _selected={{ color: 'white', bg: '#064e3b' }} className="rounded-t-lg font-medium transition-colors">Sign Up</Tab>
-          </TabList>
+        <div className="flex mb-4 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+          <button 
+            className={`flex-1 py-2 text-sm font-medium transition-colors ${activeTab === 'login' ? 'bg-[#064e3b] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+            onClick={() => setActiveTab('login')}
+          >
+            Login
+          </button>
+          <button 
+            className={`flex-1 py-2 text-sm font-medium transition-colors ${activeTab === 'signup' ? 'bg-[#064e3b] text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+            onClick={() => setActiveTab('signup')}
+          >
+            Sign Up
+          </button>
+        </div>
 
-          <TabPanels>
-            <TabPanel className="p-0 pt-2">
-              <Login />
-            </TabPanel>
-
-            <TabPanel className="p-0 pt-2">
-              <Signup />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        <div className="pt-2">
+          {activeTab === 'login' ? <Login /> : <Signup />}
+        </div>
       </div>
-
     </div>
   );
 };

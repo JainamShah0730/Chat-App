@@ -1,25 +1,15 @@
-import { Box } from '@chakra-ui/react'
-import React from 'react'
-import { CloseIcon } from '@chakra-ui/icons'
+import React from 'react';
+import { CloseIcon } from '../ui/Icons';
 
 const UserBadgeItem = ({user, handleFunction}) => {
     return (
-       <Box 
-       px={2}
-       py={2}
-       borderRadius="lg"
-       m={1}
-       mb={2}
-       fontSize={12}
-       background="purple.500"
-       color="white"
-       cursor="pointer"
-       onClick={handleFunction}
+       <div 
+         className="px-2 py-1 m-1 mb-2 rounded-lg text-xs bg-emerald-600 text-white cursor-pointer inline-flex items-center gap-1 hover:bg-emerald-700 transition-colors"
+         onClick={handleFunction}
        >
          {user.name}
-         <CloseIcon pl={1}/>
-
-       </Box>
+         <CloseIcon className="w-3 h-3" />
+       </div>
     )
 }
 

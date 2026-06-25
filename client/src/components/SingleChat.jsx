@@ -1,11 +1,11 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { ChatState } from "../Context/ChatProvider";
-import { Box, FormControl, IconButton, Input, Spinner, Text, Toast, useToast} from "@chakra-ui/react";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { Spinner } from "./ui/Spinner";
+import { ArrowBackIcon } from "./ui/Icons";
+import { useToast } from "./ui/ToastContext";
 import { getSender,getSenderFull } from "../config/ChatLogics";
 import ProfileModal from "./Authentication/miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./Authentication/miscellaneous/UpdateGroupChatModal";
-import { useState } from "react";
 import axios from "axios";
 import "./Style.css"
 import ScrollableChat from "./ScrollControlChat";
@@ -16,16 +16,19 @@ const ENDPOINT = import.meta.env.VITE_API_URL;
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  
-
        const [messages, setMessage] = useState([])
        const [loading, setLoading] = useState(false);
        const[newMessage, setNewMessage] = useState("")
        const[socketConnected, setSocketConnected] = useState(false)
        const[typing, setTyping] = useState(false)
        const[isTyping, setIsTyping] = useState(false)
-    
-
+       
+       // File upload states
+       const [fileUrl, setFileUrl] = useState("");
+       const [fileType, setFileType] = useState("");
+       const [fileName, setFileName] = useState("");
+       const [fileUploadLoading, setFileUploadLoading] = useState(false);
+       const fileInputRef = useRef(null);
     
        const toast = useToast()
     const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState()
@@ -39,7 +42,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 Authorization: `Bearer ${user.token}`,
             },
         }
-
 
         setLoading(true)
         const {data} = await axios.get(`/api/message/${selectedChat._id}`,
@@ -56,13 +58,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             description:"Failed to load the Message",
             status:"error",
             duration:5000,
-            isClosable:true,
             position:"bottom"
         })
     }
  }
-
-//  console.log(messages)
 
  useEffect(()=> {
       socket = io(ENDPOINT)
@@ -96,9 +95,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         socket.off("message recieved", messageRecievedHandler);
     };
  });
+ 
+ const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setFileUploadLoading(true);
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "CHAT-APP");
+    data.append("cloud_name", "dlp666xsd");
+
+    fetch("https://api.cloudinary.com/v1_1/dlp666xsd/auto/upload", {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setFileUrl(data.secure_url);
+        setFileType(data.resource_type);
+        setFileName(file.name);
+        setFileUploadLoading(false);
+      })
+      .catch((err) => {
+        toast({
+          title: "Upload failed",
+          status: "error",
+          duration: 5000,
+          position: "bottom",
+        });
+        setFileUploadLoading(false);
+      });
+  };
 
     const sendMessage = async(event) => {
-        if(event.key== "Enter" && newMessage){
+        if(event.key== "Enter" && (newMessage || fileUrl)){
             socket.emit("stop typing", selectedChat._id)
       try {
         const config ={
@@ -107,15 +139,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 Authorization: `Bearer ${user.token}`,
             }
         }
-              setNewMessage("")
-        const {data} = await axios.post("/api/message",{
+        
+        const msgData = {
             content: newMessage,
             chatId: selectedChat._id,
-        },
-      config
-    )
-
-    //  console.log(data)
+            fileUrl,
+            fileType,
+            fileName
+        };
+        
+        setNewMessage("")
+        setFileUrl("");
+        setFileType("");
+        setFileName("");
+        
+        const {data} = await axios.post("/api/message", msgData, config)
 
     socket.emit("new message",data)
      setMessage([...messages, data])
@@ -125,15 +163,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             description:"Failed to send the Message",
             status:"error",
             duration:5000,
-            isClosable: true,
             position:"bottom",
         })
       }
         }
 
     }
-
-    
 
     const typingHandler = (e) => {
       setNewMessage(e.target.value)
@@ -155,12 +190,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
     return(
-        <>
+        <div className="flex flex-col h-full w-full">
         {selectedChat ? (
             <div className="flex flex-col h-full w-full"> 
             
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 bg-white shrink-0 border-b border-gray-50">
+            <div className="flex items-center justify-between px-6 py-4 bg-white shrink-0 border-b border-gray-50 rounded-t-2xl">
                 <div className="flex items-center gap-4">
                     <button 
                         className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
@@ -217,11 +252,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             </div>
 
             {/* Chat Area */}
-             <div className="flex-grow flex flex-col px-6 py-4 bg-white overflow-hidden relative">
+             <div className="flex-grow flex flex-col px-6 py-4 bg-white overflow-hidden relative rounded-b-2xl">
                
                {loading ? (
                 <div className="m-auto">
-                    <Spinner size="xl" color="teal.600" w={20} h={20} />
+                    <Spinner className="w-20 h-20" colorClass="text-emerald-600" />
                 </div>
                ) : (
                <div className="flex flex-col overflow-y-auto w-full h-full custom-scrollbar pb-2">
@@ -244,25 +279,52 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   </div>
                 )}
                 
+                {fileUrl && (
+                    <div className="absolute bottom-full left-4 mb-2 bg-white border border-gray-200 rounded-lg p-2 flex items-center gap-2 shadow-sm z-10">
+                      <div className="flex flex-col max-w-[150px]">
+                        <span className="text-xs font-medium text-gray-700 truncate">{fileName}</span>
+                        <span className="text-[10px] text-gray-500">{fileType}</span>
+                      </div>
+                      <button type="button" onClick={() => { setFileUrl(""); setFileName(""); setFileType(""); }} className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+                )}
+                
                 <div className="relative flex items-center bg-gray-50 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-[#0a4a3c] transition-all border border-gray-100">
-                    <button type="button" className="text-gray-400 hover:text-gray-600 transition-colors p-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileUpload} 
+                      className="hidden" 
+                    />
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="text-gray-400 hover:text-gray-600 transition-colors p-2 relative">
+                        {fileUploadLoading ? (
+                           <Spinner className="w-5 h-5 text-emerald-600" />
+                        ) : (
+                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                        )}
+                        {fileUrl && !fileUploadLoading && (
+                            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-emerald-500"></span>
+                        )}
                     </button>
                     
                     <input 
                         type="text"
                         className="w-full px-4 py-2 bg-transparent focus:outline-none text-sm text-gray-700 placeholder-gray-400"
-                        placeholder="Type your message..."
+                        placeholder={fileUrl ? "Add a message..." : "Type your message..."}
                         onChange={typingHandler}
                         onKeyDown={sendMessage}
                         value={newMessage}
-                        required
                     />
                     
                     <button 
                         type="button" 
                         onClick={() => sendMessage({ key: "Enter" })}
-                        className="flex items-center gap-2 bg-[#0a4a3c] hover:bg-[#07362b] text-white rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
+                        disabled={!newMessage && !fileUrl}
+                        className="flex items-center gap-2 bg-[#0a4a3c] hover:bg-[#07362b] text-white rounded-full px-5 py-2.5 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Send
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 -rotate-90">
@@ -284,8 +346,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <p className="text-sm text-gray-500 mt-2 font-medium">Click on a user to start chatting</p>
             </div>
         )}
-        </>
+        </div>
     )
 }
 
-export default SingleChat 
+export default SingleChat
