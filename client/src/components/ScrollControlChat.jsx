@@ -14,7 +14,7 @@ const ScrollableChat = ({messages}) => {
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.sender.name || 'User')}&background=random`;
         return (
           <div style={{display: 'flex'}} key={m._id}>
-            {(isSameSender(messages, m, i, user._id) || isLastMessage(messages, m, i, user._id)) && (
+            {(isSameSender(messages, m, i, user._id) || isLastMessage(messages, i, user._id)) && (
               <Tooltip label={m.sender.name} placement="bottom-start" hasArrow>
                 <Avatar
                   mt="7px"

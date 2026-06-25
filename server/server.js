@@ -65,8 +65,7 @@ server.on('error', (err) => {
 const io = new Server(server, {
     pingTimeout: 60000,
     cors: {
-        // Allow Vite dev server origin; adjust if your client runs on a different port
-        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        origin: "*",
         methods: ["GET", "POST"],
     },
 });
