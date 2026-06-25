@@ -2,46 +2,54 @@ import React from "react";
 import ScrollableFeed from "react-scrollable-feed"
 import { isLastMessage, isSameSender, isSameSenderMargin, isSameUser } from "../config/ChatLogics.jsx";
 import { ChatState } from "../Context/ChatProvider";
-import { Avatar, Tooltip } from "@chakra-ui/react";
-
 
 const ScrollableChat = ({messages}) => {
   const {user} = ChatState();
 
+  const formatTime = (dateString) => {
+    if (!dateString) return "10:35 AM";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "10:35 AM";
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
-    <ScrollableFeed>
+    <ScrollableFeed className="px-2">
       {messages && messages.map((m, i) => {
-        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(m.sender.name || 'User')}&background=random`;
         const isMyMessage = m.sender._id === user._id;
+        const showAvatar = isSameSender(messages, m, i, user._id) || isLastMessage(messages, i, user._id);
+        const initials = m.sender.name ? m.sender.name.substring(0, 2).toUpperCase() : 'U';
 
         return (
-          <div style={{display: 'flex'}} key={m._id}>
-            {(isSameSender(messages, m, i, user._id) || isLastMessage(messages, i, user._id)) && (
-              <Tooltip label={m.sender.name} placement="bottom-start" hasArrow>
-                <Avatar
-                  mt="7px"
-                  mr={2}
-                  size="sm"
-                  cursor="pointer"
-                  name={m.sender.name}
-                  src={m.sender.pic || avatarUrl}
-                />
-              </Tooltip>
+          <div className={`flex w-full ${isMyMessage ? 'justify-end' : 'justify-start'}`} key={m._id} style={{ marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10 }}>
+            {!isMyMessage && (
+              <div className="flex-shrink-0 mr-3 w-8 flex flex-col justify-start mt-1">
+                {showAvatar ? (
+                  <div 
+                    className="h-8 w-8 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center font-medium text-xs shadow-sm"
+                    title={m.sender.name}
+                  >
+                    {initials}
+                  </div>
+                ) : <div className="h-8 w-8" />}
+              </div>
             )}
-
-            <span
-              className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm shadow-sm ${
-                isMyMessage 
-                  ? 'bg-emerald-800 text-white rounded-br-sm' 
-                  : 'bg-white text-gray-800 border border-gray-100 rounded-bl-sm'
-              }`}
-              style={{
-                marginLeft: isSameSenderMargin(messages, m, i, user._id),
-                marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
-              }}
-            >
-              {m.content}
-            </span>
+            
+            <div className={`flex flex-col max-w-[75%] ${isMyMessage ? 'items-end' : 'items-start'}`}>
+              <span
+                className={`rounded-2xl px-5 py-2.5 text-sm shadow-sm ${
+                  isMyMessage 
+                    ? 'bg-[#0a4a3c] text-white rounded-br-sm' 
+                    : 'bg-white text-gray-700 border border-gray-100 rounded-bl-sm'
+                }`}
+              >
+                {m.content}
+              </span>
+              
+              <span className="text-[10px] font-medium text-gray-400 mt-1 mb-1">
+                {formatTime(m.createdAt)}
+              </span>
+            </div>
           </div>
         );
       })}

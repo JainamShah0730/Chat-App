@@ -10,7 +10,7 @@ const ChatPage = () => {
 
   return (
     // Main Background: Soft Ivory/White for a clean canvas
-    <div className="flex flex-col h-screen bg-[#FDFBF7] text-[#111827] font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#F9F7F3] text-[#111827] font-sans selection:bg-emerald-900 selection:text-white overflow-hidden">
       
       {/* Header Bar */}
       {user && <SideDrawer />}

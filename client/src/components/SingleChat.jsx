@@ -160,27 +160,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             <div className="flex flex-col h-full w-full"> 
             
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white shrink-0">
-                <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between px-6 py-4 bg-white shrink-0 border-b border-gray-50">
+                <div className="flex items-center gap-4">
                     <button 
                         className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors"
-                        onClick= {() => setSelectedChat("")}
+                        onClick={() => setSelectedChat("")}
                     >
                         <ArrowBackIcon w={5} h={5} />
                     </button>
 
                     {!selectedChat.isGroupChat ? (
                         <div className="flex items-center gap-3">
-                            <span className="text-lg font-bold text-emerald-950 font-sans">
-                                {getSender(user, selectedChat.users)}
-                            </span>
-                            <ProfileModal user={getSenderFull(user, selectedChat.users)} />
+                            <div className="h-10 w-10 rounded-full bg-gray-50 border border-gray-200 text-gray-600 flex items-center justify-center font-medium text-sm">
+                                {getSender(user, selectedChat.users).substring(0, 2).toUpperCase()}
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base font-bold text-[#0a4a3c] font-sans">
+                                    {getSender(user, selectedChat.users)}
+                                </span>
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"></span> Active Now
+                                </div>
+                            </div>
                         </div>
                     ) : (
                         <div className="flex items-center gap-3"> 
-                            <span className="text-lg font-bold text-emerald-950 font-sans">
-                                {selectedChat.chatName.toUpperCase()}
-                            </span>
+                            <div className="h-10 w-10 rounded-full bg-gray-50 border border-gray-200 text-gray-600 flex items-center justify-center font-medium text-sm">
+                                {selectedChat.chatName.substring(0, 2).toUpperCase()}
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-base font-bold text-[#0a4a3c] font-sans">
+                                    {selectedChat.chatName.toUpperCase()}
+                                </span>
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]"></span> Active Now
+                                </div>
+                            </div>
                             <UpdateGroupChatModal 
                                 fetchAgain={fetchAgain}
                                 setFetchAgain={setFetchAgain}
@@ -189,10 +204,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         </div>
                     )}
                 </div>
+                
+                {/* Header Right Icons */}
+                <div className="flex items-center gap-3 text-gray-400">
+                    <button className="p-2 hover:bg-gray-50 rounded-full transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                    </button>
+                    <button className="p-2 hover:bg-gray-50 rounded-full transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
+                    </button>
+                </div>
             </div>
 
             {/* Chat Area */}
-             <div className="flex-grow flex flex-col p-4 bg-gray-50/50 overflow-hidden relative">
+             <div className="flex-grow flex flex-col px-6 py-4 bg-white overflow-hidden relative">
                
                {loading ? (
                 <div className="m-auto">
@@ -206,7 +231,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                
                <form 
                     onSubmit={(e) => { e.preventDefault(); sendMessage({ key: "Enter" }); }} 
-                    className="mt-3 relative shrink-0"
+                    className="mt-4 relative shrink-0"
                >
                 {isTyping && ( 
                   <div className="absolute -top-12 left-2">
@@ -219,22 +244,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   </div>
                 )}
                 
-                <div className="relative flex items-center">
+                <div className="relative flex items-center bg-gray-50 rounded-full px-4 py-2 shadow-sm focus-within:ring-2 focus-within:ring-[#0a4a3c] transition-all border border-gray-100">
+                    <button type="button" className="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                    </button>
+                    
                     <input 
                         type="text"
-                        className="w-full pl-6 pr-12 py-3.5 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-700 shadow-sm transition-all text-gray-700 text-sm"
-                        placeholder="Type a message..."
+                        className="w-full px-4 py-2 bg-transparent focus:outline-none text-sm text-gray-700 placeholder-gray-400"
+                        placeholder="Type your message..."
                         onChange={typingHandler}
                         onKeyDown={sendMessage}
                         value={newMessage}
                         required
                     />
+                    
                     <button 
                         type="button" 
                         onClick={() => sendMessage({ key: "Enter" })}
-                        className="absolute right-2 p-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full transition-colors shadow-sm"
+                        className="flex items-center gap-2 bg-[#0a4a3c] hover:bg-[#07362b] text-white rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                        Send
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 -rotate-90">
                             <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
                         </svg>
                     </button>
@@ -243,13 +274,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
              </div>
             </div>
         ) : (
-            <div className="flex items-center justify-center h-full w-full bg-gray-50/30">
-                <div className="text-2xl text-gray-400 font-medium font-sans flex flex-col items-center gap-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-16 h-16 text-emerald-800/20">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+            <div className="flex flex-col flex-grow items-center justify-center h-full w-full bg-[#FDFBF7]/30 rounded-2xl">
+                <div className="h-20 w-20 bg-emerald-50 rounded-full flex items-center justify-center mb-4 shadow-sm border border-emerald-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-emerald-800/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
-                    Click on a user to start chatting
                 </div>
+                <h2 className="text-xl font-semibold text-emerald-950 tracking-tight">Welcome to RageBait</h2>
+                <p className="text-sm text-gray-500 mt-2 font-medium">Click on a user to start chatting</p>
             </div>
         )}
         </>
