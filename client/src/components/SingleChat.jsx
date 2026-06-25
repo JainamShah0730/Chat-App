@@ -25,15 +25,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
        const[typing, setTyping] = useState(false)
        const[isTyping, setIsTyping] = useState(false)
     
-    
-    const defaultOption = {
-        loop: true,
-        autoplay: true,
-        animationData: animationData,
-        rendererSettings:{
-            preserveAspectRatio : "xMidYMid slice",
-        }
-    }
+
     
        const toast = useToast()
     const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState()
